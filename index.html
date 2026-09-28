@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusPulse EVM - College Event Management System</title>
+  <meta name="description" content="Next-Generation College Event Management Platform for Students, Organizers & Administrators. Discover events, register online, get scannable QR passes, and view campus analytics.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <a href="#" class="brand">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div class="brand-text">
+        Campus<span>Pulse</span>
+        <span class="badge-tag">EVM 2026</span>
+      </div>
+    </a>
+
+    <!-- Role Switcher Pill Bar -->
+    <div class="role-switcher-container">
+      <button class="role-btn active" data-role="student">
+        <i class="fa-solid fa-user-graduate"></i> Student View
+      </button>
+      <button class="role-btn" data-role="organizer">
+        <i class="fa-solid fa-calendar-plus"></i> Organizer View
+      </button>
+      <button class="role-btn" data-role="admin">
+        <i class="fa-solid fa-shield-halved"></i> Admin Control
+      </button>
+    </div>
+
+    <!-- Right Header Actions -->
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" id="btn-theme-toggle" title="Toggle Light/Dark Theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <div class="user-profile-badge">
+        <div class="avatar-circle" id="user-avatar">AR</div>
+        <div class="user-info">
+          <span class="user-name" id="user-name-display">Alex Rivera</span>
+          <span class="user-role-label" id="user-role-display">Student</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Wrapper -->
+  <main class="app-container">
+
+    <!-- ROLE 1: STUDENT VIEW -->
+    <section id="view-student" class="role-view">
+
+      <!-- Hero Featured Event Header -->
+      <div class="hero-card" id="hero-featured-container">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+
+      <!-- Quick Metrics Counter Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrapper stat-indigo">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+          <div>
+            <div class="stat-number" id="stat-total-events">0</div>
+            <div class="stat-label">Upcoming Campus Events</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrapper stat-emerald">
+            <i class="fa-solid fa-ticket"></i>
+          </div>
+          <div>
+            <div class="stat-number" id="stat-my-passes">0</div>
+            <div class="stat-label">My Registered Passes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrapper stat-amber">
+            <i class="fa-solid fa-bullhorn"></i>
+          </div>
+          <div>
+            <div class="stat-number" id="stat-announcements">0</div>
+            <div class="stat-label">Live Announcements</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-wrapper stat-purple">
+            <i class="fa-solid fa-building-columns"></i>
+          </div>
+          <div>
+            <div class="stat-number" id="stat-active-venues">0</div>
+            <div class="stat-label">Campus Venues Available</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="filter-toolbar">
+        <div class="category-pills">
+          <button class="cat-pill active" data-category="All"><i class="fa-solid fa-grid-2"></i> All Categories</button>
+          <button class="cat-pill" data-category="Tech Fest"><i class="fa-solid fa-code"></i> Tech Fest</button>
+          <button class="cat-pill" data-category="Cultural"><i class="fa-solid fa-masks-theater"></i> Cultural</button>
+          <button class="cat-pill" data-category="Workshops"><i class="fa-solid fa-laptop-code"></i> Workshops</button>
+          <button class="cat-pill" data-category="Sports & Gaming"><i class="fa-solid fa-gamepad"></i> Sports & Gaming</button>
+          <button class="cat-pill" data-category="Seminars"><i class="fa-solid fa-chalkboard-user"></i> Seminars</button>
+        </div>
+
+        <div class="search-filter-row">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="input-search-events" class="search-input" placeholder="Search event title, venue, or keywords...">
+          </div>
+          <select id="select-dept-filter" class="filter-select">
+            <option value="All">All Departments</option>
+          </select>
+          <select id="select-sort-filter" class="filter-select">
+            <option value="date-asc">Date: Upcoming First</option>
+            <option value="popularity">Popularity: High to Low</option>
+            <option value="price-low">Price: Free to Paid</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div class="section-title-group">
+        <h2 class="section-title"><i class="fa-solid fa-sparkles text-indigo"></i> Discover Events</h2>
+        <p class="section-subtitle">Explore technical hackathons, cultural nights, and hands-on workshops across campus.</p>
+      </div>
+      
+      <div class="events-grid" id="events-grid-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Announcements Widget -->
+      <div class="announcements-container">
+        <div class="section-title-group" style="margin-bottom: 0;">
+          <h3 class="section-title" style="font-size: 1.3rem;"><i class="fa-solid fa-bullhorn text-amber"></i> Campus Live Announcements</h3>
+        </div>
+        <div class="announcements-grid" id="announcements-feed">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- My Tickets Wallet Section -->
+      <div class="tickets-section">
+        <div class="section-title-group">
+          <h2 class="section-title"><i class="fa-solid fa-wallet text-emerald"></i> My Event Passes & Tickets</h2>
+          <p class="section-subtitle">Your active digital entry passes with scannable QR codes for check-in.</p>
+        </div>
+        <div class="tickets-grid" id="my-tickets-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ROLE 2: EVENT ORGANIZER VIEW -->
+    <section id="view-organizer" class="role-view" style="display: none;">
+      <div class="workbench-header-bar">
+        <div>
+          <h2 class="section-title"><i class="fa-solid fa-calendar-plus text-indigo"></i> Event Organizer Studio</h2>
+          <p class="section-subtitle">Create new campus events, monitor registrations, check venue availability, and scan passes.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="btn-open-scanner">
+            <i class="fa-solid fa-qrcode"></i> QR Pass Scanner
+          </button>
+          <button class="btn btn-primary" id="btn-create-event-modal">
+            <i class="fa-solid fa-plus"></i> Create New Event
+          </button>
+        </div>
+      </div>
+
+      <div class="section-title-group">
+        <h3 class="section-title" style="font-size: 1.25rem;">My Organized Events</h3>
+      </div>
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Event Title</th>
+              <th>Date & Time</th>
+              <th>Venue</th>
+              <th>Registrations</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="organizer-events-tbody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title-group" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <h3 class="section-title" style="font-size: 1.25rem;"><i class="fa-solid fa-users text-emerald"></i> Registered Attendees Roster</h3>
+          <p class="section-subtitle">Filter participants and update check-in attendance statuses.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-export-csv">
+          <i class="fa-solid fa-file-csv"></i> Export CSV Roster
+        </button>
+      </div>
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Student Name</th>
+              <th>Student ID & Dept</th>
+              <th>Event Title</th>
+              <th>Registered On</th>
+              <th>Check-In Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="attendees-tbody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROLE 3: ADMINISTRATOR VIEW -->
+    <section id="view-admin" class="role-view" style="display: none;">
+      <div class="workbench-header-bar">
+        <div>
+          <h2 class="section-title"><i class="fa-solid fa-chart-pie text-purple"></i> Campus Executive Analytics</h2>
+          <p class="section-subtitle">Real-time engagement metrics, event approval queue, venue conflicts, and emergency broadcasts.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-post-announcement">
+          <i class="fa-solid fa-bullhorn"></i> Broadcast Announcement
+        </button>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4 class="chart-title">Registrations by Department</h4>
+            <span class="badge-tag">Live Data</span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="chart-dept-bar"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4 class="chart-title">Event Category Distribution</h4>
+            <span class="badge-tag">Live Data</span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="chart-category-donut"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title-group">
+        <h3 class="section-title" style="font-size: 1.25rem;"><i class="fa-solid fa-clock-history text-amber"></i> Event Approval Queue</h3>
+        <p class="section-subtitle">Review event proposals submitted by student clubs and faculty organizers.</p>
+      </div>
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Event Title</th>
+              <th>Category & Dept</th>
+              <th>Requested Date & Venue</th>
+              <th>Organizer</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-approvals-tbody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title-group">
+        <h3 class="section-title" style="font-size: 1.25rem;"><i class="fa-solid fa-building text-cyan"></i> Campus Venue Status</h3>
+      </div>
+      <div class="events-grid" id="venues-status-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="modal-event-detail">
+    <div class="modal-container" style="max-width: 760px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="md-title">Event Details</h3>
+        <button class="modal-close-btn" data-close="modal-event-detail"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="md-body-content"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-registration">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-ticket text-emerald"></i> Online Event Registration</h3>
+        <button class="modal-close-btn" data-close="modal-registration"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-registration">
+          <input type="hidden" id="reg-event-id">
+          
+          <div class="form-group">
+            <label class="form-label">Event Name</label>
+            <input type="text" id="reg-event-title" class="form-input" readonly>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Student Name</label>
+              <input type="text" id="reg-student-name" class="form-input" value="Alex Rivera" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Student Roll / ID Number</label>
+              <input type="text" id="reg-student-id" class="form-input" value="2024-CS-042" required>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">College Email</label>
+              <input type="email" id="reg-student-email" class="form-input" value="alex.rivera@student.college.edu" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select id="reg-department" class="form-select" required></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Academic Year</label>
+            <select id="reg-academic-year" class="form-select" required>
+              <option value="1st Year">1st Year (Freshman)</option>
+              <option value="2nd Year">2nd Year (Sophomore)</option>
+              <option value="3rd Year" selected>3rd Year (Junior)</option>
+              <option value="4th Year">4th Year (Senior)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" data-close="modal-registration">Cancel</button>
+            <button type="submit" class="btn btn-emerald"><i class="fa-solid fa-check"></i> Confirm Registration</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-ticket-pass">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-id-badge text-indigo"></i> Official Digital Entry Pass</h3>
+        <button class="modal-close-btn" data-close="modal-ticket-pass"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="ticket-pass-modal-content"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-create-event">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-calendar-plus text-indigo"></i> Launch New Event</h3>
+        <button class="modal-close-btn" data-close="modal-create-event"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-create-event">
+          <div class="form-group">
+            <label class="form-label">Event Title</label>
+            <input type="text" id="ce-title" class="form-input" placeholder="e.g. Hackathon '26 - Code Blitz" required>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="ce-category" class="form-select" required>
+                <option value="Tech Fest">Tech Fest</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Workshops">Workshops</option>
+                <option value="Sports & Gaming">Sports & Gaming</option>
+                <option value="Seminars">Seminars</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select id="ce-department" class="form-select" required></select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Start Date</label>
+              <input type="date" id="ce-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time (e.g. 10:00 AM - 04:00 PM)</label>
+              <input type="text" id="ce-time" class="form-input" placeholder="10:00 AM - 04:00 PM" required>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Campus Venue</label>
+              <select id="ce-venue" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Seating Capacity</label>
+              <input type="number" id="ce-capacity" class="form-input" value="100" min="10" max="5000" required>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Ticket Fee (₹) [0 for Free]</label>
+              <input type="number" id="ce-price" class="form-input" value="0" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cover Banner URL</label>
+              <input type="url" id="ce-image" class="form-input" value="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1000&q=80">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Event Description</label>
+            <textarea id="ce-description" class="form-textarea" rows="3" required></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" data-close="modal-create-event">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit Event Proposal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-checkin-scanner">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-qrcode text-emerald"></i> Attendance Check-In Scanner</h3>
+        <button class="modal-close-btn" data-close="modal-checkin-scanner"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div style="background: rgba(0,0,0,0.4); border: 2px dashed var(--accent-emerald); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-camera-viewfinder" style="font-size: 3rem; color: var(--accent-emerald); margin-bottom: 1rem;"></i>
+          <p style="font-size: 0.9rem; color: var(--text-secondary);">Point camera at student ticket QR code or manually enter the Pass Ticket ID below.</p>
+        </div>
+
+        <form id="form-scan-checkin" style="display: flex; gap: 0.5rem;">
+          <input type="text" id="scan-ticket-id-input" class="form-input" placeholder="e.g. TCK-8921-CS" required>
+          <button type="submit" class="btn btn-emerald"><i class="fa-solid fa-check"></i> Check In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
